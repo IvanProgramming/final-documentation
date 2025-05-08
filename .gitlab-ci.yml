@@ -1,0 +1,45 @@
+# ────────────────────────────
+#  .gitlab-ci.yml
+# ────────────────────────────
+stages:
+  - build
+
+variables:
+  # Каталог, где build_docs.py создаёт fragment-ы
+  BUILD_DIR: build
+
+# ---------- Сборка PDF ----------
+build-pdf:
+  stage: build
+
+  # 👉 Используем образ, собранный из Dockerfile текущего репо
+  #    GitLab сам построит его и закэширует (если shared runner настроен
+  #    на Docker + "Auto DevOps / Build → Enable custom build").
+  image: $CI_REGISTRY_IMAGE:latest
+
+  #  Если вы используете собственный registry:
+  # image: registry.gitlab.com/<group>/<project>/latex-builder:latest
+
+  before_script:
+    # Набор python-зависимостей, если они нужны (requirements.txt)
+    # pip install --no-cache-dir -r requirements.txt || true
+    - echo "Using image $CI_REGISTRY_IMAGE"
+
+  script:
+    - python3 build_docs.py build      # 1) .md → .tex   2) latexmk → PDF
+    - ls -lh main.pdf                  # контрольный вывод
+
+  artifacts:
+    # Отдаём PDF как job-артефакт
+    paths:
+      - main.pdf
+    expire_in: 1 week
+
+  rules:
+    # Запускать при изменении Markdown, LaTeX или CI-файлов
+    - changes:
+        - "SRC/**/*.md"
+        - "*.tex"
+        - ".gitlab-ci.yml"
+        - "build_docs.py"
+      when: on_success

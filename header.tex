@@ -1,0 +1,29 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[T2A]{fontenc}
+\usepackage{changepage}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{indentfirst}
+\usepackage{multicol}
+\usepackage{amsfonts}
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+\usepackage{enumitem}
+\usepackage{pgfplots}
+\usepackage{minted}
+\usepackage{url}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{subcaption} % loads the caption package
+\makeatletter % |список 
+\renewcommand{\@biblabel}[1]{#1.}% |с \makeatother % |точкой
+\geometry{
+a4paper,
+top=20mm,
+left=30mm,
+bottom=20mm,
+right=15mm,
+}
+\def\code#1{\texttt{#1}}
+\addto\captionsrussian{\def\refname{Список используемой литературы}}
+\renewcommand{\labelitemi}{$-$}
