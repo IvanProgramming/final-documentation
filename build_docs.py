@@ -36,6 +36,7 @@ def convert_md_to_tex() -> None:
             [
                 "pandoc",
                 "-f", "markdown",
+                "--lua-filter=image.lua",
                 "-t", "latex",      # без -s ⇒ без \documentclass и \begin{document}
                 str(md),
                 "-o", str(tex_out),
