@@ -16,6 +16,7 @@ import subprocess
 import shutil
 from pathlib import Path
 import sys
+import os
 
 SRC_DIR   = Path("src")
 BUILD_DIR = Path("build")
@@ -44,13 +45,16 @@ def convert_md_to_tex() -> None:
 
 def compile_pdf() -> None:
     """Собираем main.tex → PDF (latexmk сам вызовет xelatex/pdflatex)."""
+    os.chdir(BUILD_DIR)  # переходим в build/ для сборки PDF
+    print("cd ", BUILD_DIR.resolve())
     if not MAIN_TEX.is_file():
         sys.exit(f"Файл {MAIN_TEX} не найден.")
     print(f"⧗ Компиляция {MAIN_TEX} …")
     subprocess.run(
-        ["latexmk", "-pdf", "-interaction=nonstopmode", str(MAIN_TEX)],
+        ["pdflatex", "-pdf", "-interaction=nonstopmode", "-synctex=1", "-shell-escape", str(MAIN_TEX)], 
         check=True,
     )
+    os.chdir("..")  # возвращаемся в исходный каталог
     print(f"✓ Готово: {OUTPUT_PDF.resolve()}")
 
 def clean() -> None:

@@ -1,0 +1,9 @@
+*.aux
+*.log
+*.pdf
+*.fls
+*.fdb_latexmk
+build/*
+!build/main.tex
+!build/header.tex
+_minted*
