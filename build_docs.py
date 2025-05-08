@@ -50,10 +50,16 @@ def compile_pdf() -> None:
     if not MAIN_TEX.is_file():
         sys.exit(f"Файл {MAIN_TEX} не найден.")
     print(f"⧗ Компиляция {MAIN_TEX} …")
-    subprocess.run(
-        ["pdflatex", "-pdf", "-interaction=nonstopmode", "-synctex=1", "-shell-escape", str(MAIN_TEX)], 
-        check=True,
-    )
+    try:
+        subprocess.run(
+            ["pdflatex", "-pdf", "-interaction=nonstopmode", "-synctex=1", "-shell-escape", str(MAIN_TEX)], 
+            check=True,
+        )
+    except subprocess.CalledProcessError:
+        print("Ошибка, проверяю наличие PDF")
+        if not OUTPUT_PDF.is_file():
+            print("PDF не найден, проверьте ошибки в LaTeX-файлах.")
+            sys.exit(1)
     os.chdir("..")  # возвращаемся в исходный каталог
     print(f"✓ Готово: {OUTPUT_PDF.resolve()}")
 
