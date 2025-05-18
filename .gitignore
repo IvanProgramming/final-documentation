@@ -6,4 +6,5 @@
 build/*
 !build/main.tex
 !build/header.tex
+!build/title.tex
 _minted*

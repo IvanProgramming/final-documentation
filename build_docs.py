@@ -22,6 +22,7 @@ SRC_DIR   = Path("src")
 BUILD_DIR = Path("build")
 MAIN_TEX  = Path("main.tex")
 OUTPUT_PDF = MAIN_TEX.with_suffix(".pdf")
+templates = ["main", "title", "header"]
 
 def convert_md_to_tex() -> None:
     """Пробегаемся по SRC/*.md и получаем build/*.tex."""
@@ -37,6 +38,8 @@ def convert_md_to_tex() -> None:
                 "pandoc",
                 "-f", "markdown",
                 "--lua-filter=image.lua",
+                "--lua-filter=table.lua",
+                "--lua-filter=header.lua",
                 "-t", "latex",      # без -s ⇒ без \documentclass и \begin{document}
                 str(md),
                 "-o", str(tex_out),
@@ -53,7 +56,7 @@ def compile_pdf() -> None:
     print(f"⧗ Компиляция {MAIN_TEX} …")
     try:
         subprocess.run(
-            ["pdflatex", "-pdf", "-interaction=nonstopmode", "-synctex=1", "-shell-escape", str(MAIN_TEX)], 
+            ["pdflatex", "-interaction=nonstopmode", "-synctex=1", "-shell-escape", str(MAIN_TEX)], 
             check=True,
         )
     except subprocess.CalledProcessError:
@@ -66,15 +69,13 @@ def compile_pdf() -> None:
 
 def clean() -> None:
     """Удаляем build/ и временные LaTeX-файлы."""
-    if BUILD_DIR.exists():
-        shutil.rmtree(BUILD_DIR)
-        print(f"Удалён каталог {BUILD_DIR}/")
     aux_ext = [".aux", ".log", ".out", ".toc", ".fls", ".fdb_latexmk"]
     for ext in aux_ext + [".pdf"]:
-        for f in Path(".").glob(f"*{ext}"):
+        for f in BUILD_DIR.glob(f"*{ext}"):
             if f.is_file():
-                f.unlink()
-                print(f"Удалён {f}")
+                if f.name.split(".") not in templates:
+                    print(f"Удалён {f}")
+                    f.unlink()
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Сборка документации проекта.")

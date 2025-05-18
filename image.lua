@@ -14,10 +14,13 @@ function Image(el)
   
     -- собираем LaTeX код
     local latex = string.format([[
-    \includegraphics[width=0.75\linewidth]{%s}
-]],
-      el.src)
+        \begin{figure}[!htp]
+        \centering
+    \includegraphics[width=0.65\linewidth]{%s}
+    \end{figure}
+]], el.src)
   
     return pandoc.RawInline('latex', latex)
   end
+  
   
